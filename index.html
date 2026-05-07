@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>edge-tts Command Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      color: #38bdf8;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    select, textarea, input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 1rem;
+    }
+
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    #output {
+      margin-top: 15px;
+      height: 120px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>edge-tts Command Generator</h1>
+
+  <label for="voice">Voice</label>
+  <select id="voice">
+    <option value="en-US-AnaNeural">en-US-AnaNeural</option>
+    <option value="en-US-AriaNeural">en-US-AriaNeural</option>
+    <option value="en-US-AvaNeural">en-US-AvaNeural</option>
+    <option value="en-US-EmmaNeural">en-US-EmmaNeural</option>
+    <option value="en-US-JennyNeural">en-US-JennyNeural</option>
+    <option value="en-US-MichelleNeural">en-US-MichelleNeural</option>
+
+    <option value="en-GB-SoniaNeural">en-GB-SoniaNeural</option>
+    <option value="en-GB-MaisieNeural">en-GB-MaisieNeural</option>
+    <option value="en-GB-LibbyNeural">en-GB-LibbyNeural</option>
+
+    <option value="en-AU-NatashaNeural">en-AU-NatashaNeural</option>
+
+    <option value="en-CA-ClaraNeural">en-CA-ClaraNeural</option>
+  </select>
+
+  <label for="text">Text</label>
+  <textarea id="text" placeholder="Type what the voice should say..."></textarea>
+
+  <label for="prefix">Filename Prefix (optional)</label>
+  <input id="prefix" type="text" placeholder="Defaults to voice name" />
+
+  <button onclick="generate()">Generate Command</button>
+
+  <textarea id="output" readonly placeholder="Your command will appear here..."></textarea>
+
+  <button onclick="copyOutput()">Copy</button>
+</div>
+
+<script>
+function randomId() {
+  return Math.floor(1000 + Math.random() * 9000);
+}
+
+function getVoiceSuffix(voice) {
+  const parts = voice.split("-");
+  return parts[parts.length - 1];
+}
+
+function generate() {
+  const voice = document.getElementById("voice").value;
+  const text = document.getElementById("text").value.trim();
+  const prefix = document.getElementById("prefix").value.trim();
+
+  if (!text) {
+    document.getElementById("output").value = "Error: Text is required.";
+    return;
+  }
+
+  const base = prefix || getVoiceSuffix(voice);
+  const filename = base + randomId() + ".mp3";
+
+  const command =
+    `edge-tts --voice ${voice} --text "` +
+    text +
+    `" --write-media ${filename}`;
+
+  document.getElementById("output").value = command;
+}
+
+function copyOutput() {
+  const out = document.getElementById("output").value;
+  navigator.clipboard.writeText(out);
+}
+</script>
+
+</body>
+</html>
