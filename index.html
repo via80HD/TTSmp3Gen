@@ -147,10 +147,11 @@ function generate() {
   const base = prefix || getVoiceSuffix(voice);
   const filename = base + randomId() + ".mp3";
 
+  // FIXED QUOTING HERE
   const command =
-    `edge-tts --voice ${voice} --text '` +
+    `edge-tts --voice ${voice} --text "'` +
     text +
-    `' --write-media ${filename}`;
+    `'" --write-media ${filename}`;
 
   document.getElementById("output").value = command;
 }
